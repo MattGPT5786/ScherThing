@@ -1,21 +1,17 @@
-// ScherThing bake: render the personal payload (reminders + calendars) to HTML,
-// AES-256-GCM encrypt it (PBKDF2-SHA256, 600k rounds, key derived from the passphrase),
-// and inject the ciphertext into index.html between the PAYLOAD markers.
-// Raw data and the passphrase live ONLY under private/ and are never pushed.
+// ScherThing bake: render the personal content (reminders + calendars) to HTML
+// and inject it into index.html between the CONTENT markers (plaintext — Matt
+// confirmed the public-dashboard choice on Nov 8, 2026; encryption removed).
+// Raw data exports live ONLY under private/ and are never pushed.
 //
 // Usage:
-//   node bake.mjs --demo     fake data + passphrase from $SCHERTHING_PW or "demo-passphrase"
-//   node bake.mjs            private/*.json + passphrase from private/.passphrase (or $SCHERTHING_PW)
+//   node bake.mjs --demo     fake data
+//   node bake.mjs            private/*.json (fresh exports)
 import { readFileSync, writeFileSync } from "node:fs";
-import { webcrypto as crypto } from "node:crypto";
 
 const DIR = new URL(".", import.meta.url).pathname;
 const TZ = "America/New_York";
 const ITER = 600000;
 const demo = process.argv.includes("--demo");
-
-const passphrase = process.env.SCHERTHING_PW
-  || (demo ? "demo-passphrase" : readFileSync(DIR + "private/.passphrase", "utf8").trim());
 
 /* ---------- load data ---------- */
 let reminders, events, bakedAt = new Date();
@@ -120,22 +116,11 @@ const payloadHTML =
   + calHTML
   + `</section>`;
 
-/* ---------- encrypt ---------- */
-const b64 = buf => Buffer.from(buf).toString("base64");
-const salt = crypto.getRandomValues(new Uint8Array(16));
-const iv = crypto.getRandomValues(new Uint8Array(12));
-const baseKey = await crypto.subtle.importKey("raw", new TextEncoder().encode(passphrase), "PBKDF2", false, ["deriveKey"]);
-const key = await crypto.subtle.deriveKey(
-  { name: "PBKDF2", salt, iterations: ITER, hash: "SHA-256" }, baseKey,
-  { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
-const cipher = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(payloadHTML));
-const payload = { v: 1, iter: ITER, salt: b64(salt), iv: b64(iv), data: b64(cipher) };
-
-/* ---------- inject ---------- */
+/* ---------- inject (plaintext) ---------- */
 const file = DIR + "index.html";
 const html = readFileSync(file, "utf8");
-const block = `/*PAYLOAD_START*/\nconst ENCRYPTED_PAYLOAD = ${JSON.stringify(payload)};\n/*PAYLOAD_END*/`;
-if (!html.includes("/*PAYLOAD_START*/") || !html.includes("/*PAYLOAD_END*/"))
-  throw new Error("PAYLOAD markers not found in index.html");
-writeFileSync(file, html.replace(/\/\*PAYLOAD_START\*\/[\s\S]*?\/\*PAYLOAD_END\*\//, block));
-console.log(`${demo ? "DEMO" : "REAL"} bake done: payload ${payloadHTML.length} chars -> ciphertext ${payload.data.length} b64 chars, injected into index.html`);
+if (!html.includes("<!--CONTENT_START-->") || !html.includes("<!--CONTENT_END-->"))
+  throw new Error("CONTENT markers not found in index.html");
+writeFileSync(file, html.replace(/<!--CONTENT_START-->[\s\S]*?<!--CONTENT_END-->/,
+  "<!--CONTENT_START-->\n" + payloadHTML + "\n<!--CONTENT_END-->"));
+console.log(`${demo ? "DEMO" : "REAL"} bake done: content ${payloadHTML.length} chars injected into index.html`);
