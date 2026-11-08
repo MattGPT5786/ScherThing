@@ -75,12 +75,15 @@
     #personalRoot{flex:1;min-height:0;display:grid;gap:12px;
       grid-template-columns:300px 330px minmax(0,1fr);
       grid-template-rows:auto minmax(0,1fr) minmax(0,1fr);
-      grid-template-areas:"note note note" "today otto cal" "house otto cal"}
+      grid-template-areas:"note note note" "today cal otto" "house cal otto"}
     .snap-note{grid-area:note}
     .sec .item{padding:5px 0}
     .sec .item-title{font-size:13.5px}
     .sec-otto .item-notes{font-size:11.5px;line-height:1.4;margin-top:2px}
     .sec .ev{padding:2px 0}
+    .sec-otto .items{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+    .sec-house .item{padding:3px 0}
+    .sec-house .item-title{font-size:13px}
     .sec-today{grid-area:today;overflow:auto}
     .sec-otto{grid-area:otto;overflow:auto}
     .sec-house{grid-area:house;overflow:auto}
