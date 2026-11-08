@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScherThing — Family Dashboard</title>
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#121826; --panel2:#151d2e; --line:#26314a; --line-soft:#1c2539;
+    --text:#e8edf6; --muted:#9aa7bd; --faint:#67738c; --blue:#4da3ff; --gold:#f5c542; --red:#ff6b6b; --purple:#c792ea;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:radial-gradient(1200px 600px at 50% -10%, #16233c 0%, var(--bg) 55%);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;min-height:100vh}
+  .topbar{border-bottom:1px solid var(--line-soft);background:rgba(10,14,23,.72);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10}
+  .topbar-in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
+  .brand-name{font-size:17px;font-weight:800;letter-spacing:.14em;line-height:1.1}
+  .brand-sub{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+  .top-right{margin-left:auto;display:flex;align-items:center;gap:14px;text-align:right}
+  .date{font-size:13px;font-weight:600}
+  #lockBtn{display:none;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:9px;
+    padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
+  #lockBtn:hover{border-color:var(--blue)}
+  main{max-width:1240px;margin:0 auto;padding:16px 20px 8px}
+  footer{max-width:1240px;margin:0 auto;padding:0 20px 26px;color:var(--faint);font-size:12px}
+  /* ---------- weather band (public, live) ---------- */
+  .wx-band{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line-soft);
+    border-radius:14px;padding:12px 18px;margin-bottom:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+  .wx-layout{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .wx-loc{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .wx-now{display:flex;align-items:center;gap:12px}
+  .wx-icon{font-size:34px;line-height:1}
+  .wx-temp{font-size:30px;font-weight:800;letter-spacing:-.01em;line-height:1}
+  .wx-cond{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .wx-stats{display:flex;gap:8px;flex-wrap:wrap}
+  .wx-stat{background:#0d1322;border:1px solid var(--line-soft);border-radius:10px;padding:6px 12px;min-width:78px}
+  .wx-stat .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .wx-stat .v{font-size:14.5px;font-weight:700;margin-top:1px}
+  .wx-fc{display:flex;gap:4px;margin-left:auto}
+  .wx-day{text-align:center;padding:4px 8px;border-radius:9px}
+  .wx-day .d{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .wx-day .i{font-size:16px;margin:2px 0}
+  .wx-day .t{font-size:12px;font-weight:700}
+  .wx-day .t .lo{color:var(--faint);font-weight:500}
+  .wx-day .p{font-size:10px;color:var(--blue)}
+  /* ---------- lock card ---------- */
+  .lock-card{max-width:440px;margin:6vh auto 0;background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+  .lock-emoji{font-size:38px}
+  .lock-card h1{font-size:19px;margin:10px 0 6px}
+  .lock-card p{color:var(--muted);font-size:13.5px;line-height:1.55;margin:0 0 16px}
+  .lock-row{display:flex;gap:8px}
+  .lock-row input{flex:1;background:#0d1322;border:1px solid var(--line);border-radius:10px;color:var(--text);
+    padding:11px 13px;font-size:15px;min-width:0}
+  .lock-row input:focus{outline:none;border-color:var(--blue)}
+  .lock-row button{background:linear-gradient(135deg,#7cc0ff,#2f7fe0);color:#06121f;border:none;border-radius:10px;
+    padding:11px 18px;font-size:14px;font-weight:800;cursor:pointer}
+  .lock-err{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
+  .lock-fine{color:var(--faint);font-size:11.5px;margin-top:12px;line-height:1.5}
+  /* ---------- payload (decrypted content) ---------- */
+  .snap-note{color:var(--faint);font-size:12px}
+  .sec{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line-soft);
+    border-radius:14px;padding:14px 16px 6px;box-shadow:0 10px 30px rgba(0,0,0,.35);min-height:0}
+  .sec h2{margin:0 0 8px;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+  .sec h2 .n{color:var(--faint);letter-spacing:0;font-weight:600;text-transform:none}
+  .item{padding:7px 0;border-top:1px solid var(--line-soft)}
+  .item:first-of-type{border-top:none}
+  .item-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .item-title{font-size:14px;font-weight:650}
+  .chip{font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .chip.today{color:#0b1220;background:var(--gold);border-color:var(--gold)}
+  .chip.sched{color:#bcd8ff;border-color:#2b4365;background:rgba(77,163,255,.08)}
+  .chip.cal-matt{color:#bcd8ff;border-color:#2b4365;background:rgba(77,163,255,.10)}
+  .chip.cal-sam{color:#ecd9ff;border-color:#4b3265;background:rgba(199,146,234,.10)}
+  .chip.cal-scher{color:#ffedb8;border-color:#65552b;background:rgba(245,197,66,.10)}
+  .flag{color:var(--red);font-size:11.5px;font-weight:800}
+  .item-notes{color:var(--muted);font-size:12px;line-height:1.45;margin-top:3px}
+  .day-group{padding:7px 0;border-top:1px solid var(--line-soft)}
+  .day-group:first-of-type{border-top:none}
+  .day-label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .day-label.today{color:var(--gold)}
+  .ev{display:flex;align-items:baseline;gap:8px;padding:2.5px 0;font-size:13.5px}
+  .ev .time{color:var(--faint);font-size:12px;font-weight:700;min-width:64px;flex:0 0 auto}
+  .ev .ttl{font-weight:600}
+  .empty{color:var(--faint);font-size:13px;padding:4px 0 10px}
+  /* ---------- one-screen dashboard mode ---------- */
+  @media (min-width:1180px) and (min-height:720px){
+    body{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+    main{flex:1;min-height:0;width:100%;display:flex;flex-direction:column}
+    .wx-band{flex:0 0 auto}
+    #personalRoot{flex:1;min-height:0;display:grid;gap:12px;
+      grid-template-columns:300px 330px minmax(0,1fr);
+      grid-template-rows:auto minmax(0,1fr) minmax(0,1fr);
+      grid-template-areas:"note note note" "today otto cal" "house otto cal"}
+    .snap-note{grid-area:note}
+    .sec-today{grid-area:today;overflow:auto}
+    .sec-otto{grid-area:otto;overflow:auto}
+    .sec-house{grid-area:house;overflow:auto}
+    .sec-cal{grid-area:cal;overflow:auto}
+    footer{width:100%}
+  }
+  @media (max-width:1179px){
+    .sec{margin-bottom:14px}
+    .wx-fc{margin-left:0}
+  }
+  @media (max-width:640px){ .lock-row{flex-direction:column} .lock-row button{width:100%} }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-in">
+    <div>
+      <div class="brand-name">ScherThing</div>
+      <div class="brand-sub">Family Dashboard</div>
+    </div>
+    <div class="top-right">
+      <div class="date" id="today"></div>
+      <button id="lockBtn" type="button">🔒 Lock</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="wx-band" aria-label="Weather">
+    <div id="wxBody"><div class="wx-loc">Cherry Hill, NJ · 08003</div><div class="wx-cond">Loading weather…</div></div>
+  </section>
+
+  <div class="lock-card" id="lockCard">
+    <div class="lock-emoji">🔒</div>
+    <h1>The family list is encrypted</h1>
+    <p>Otto's care routine, the household list, and the family calendars live here — scrambled with AES-256 encryption. Enter the family passphrase to unlock them in this browser.</p>
+    <form class="lock-row" id="unlockForm">
+      <input type="password" id="pw" placeholder="Passphrase" autocomplete="current-password" aria-label="Passphrase">
+      <button type="submit" id="unlockBtn">Unlock</button>
+    </form>
+    <div class="lock-err" id="lockErr"></div>
+    <div class="lock-fine">The key is derived from your passphrase in your browser (PBKDF2, 600,000 rounds) — never stored, never sent anywhere. Nothing readable exists in this page's source.</div>
+  </div>
+
+  <div id="personalRoot" hidden></div>
+</main>
+
+<footer>ScherThing · Weather is live · Family content is an encrypted snapshot, re-baked daily.</footer>
+
+<script>
+/*PAYLOAD_START*/
+const ENCRYPTED_PAYLOAD = {"v":1,"iter":600000,"salt":"XfDuIj/tfwcNUh1b8mO2zQ==","iv":"ver6OkwbS9fO/bqd","data":"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"};
+/*PAYLOAD_END*/
+
+/* ---------- unlock ---------- */
+const b64ToBuf = s => Uint8Array.from(atob(s), c => c.charCodeAt(0)).buffer;
+async function tryUnlock(passphrase){
+  if (!ENCRYPTED_PAYLOAD) throw new Error("No snapshot baked yet.");
+  const enc = new TextEncoder();
+  const baseKey = await crypto.subtle.importKey("raw", enc.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
+  const key = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: b64ToBuf(ENCRYPTED_PAYLOAD.salt), iterations: ENCRYPTED_PAYLOAD.iter, hash: "SHA-256" },
+    baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const plain = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: b64ToBuf(ENCRYPTED_PAYLOAD.iv) }, key, b64ToBuf(ENCRYPTED_PAYLOAD.data));
+  return new TextDecoder().decode(plain);
+}
+document.getElementById("unlockForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = document.getElementById("unlockBtn");
+  const err = document.getElementById("lockErr");
+  btn.disabled = true; btn.textContent = "Unlocking…"; err.textContent = "";
+  try {
+    const html = await tryUnlock(document.getElementById("pw").value);
+    const root = document.getElementById("personalRoot");
+    root.innerHTML = html;
+    root.hidden = false;
+    document.getElementById("lockCard").hidden = true;
+    document.getElementById("lockBtn").style.display = "inline-block";
+  } catch (_) {
+    err.textContent = "That passphrase didn't work. Try again.";
+    btn.disabled = false; btn.textContent = "Unlock";
+  }
+});
+document.getElementById("lockBtn").addEventListener("click", () => location.reload());
+document.getElementById("today").textContent =
+  new Date().toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+
+/* ---------- weather: Open-Meteo, Cherry Hill NJ (08003) ---------- */
+const WX_URL = "https://api.open-meteo.com/v1/forecast?latitude=39.9351&longitude=-75.0307"
+  + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,is_day"
+  + "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset"
+  + "&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York&forecast_days=5";
+function wxInfo(code, isDay){
+  const m = {
+    0:["Clear sky", isDay ? "☀️" : "🌙"], 1:["Mainly clear", isDay ? "🌤️" : "🌙"],
+    2:["Partly cloudy","⛅"], 3:["Overcast","☁️"], 45:["Fog","🌫️"], 48:["Fog","🌫️"],
+    51:["Light drizzle","🌦️"], 53:["Drizzle","🌦️"], 55:["Drizzle","🌦️"],
+    56:["Freezing drizzle","🌦️"], 57:["Freezing drizzle","🌦️"],
+    61:["Light rain","🌧️"], 63:["Rain","🌧️"], 65:["Heavy rain","🌧️"],
+    66:["Freezing rain","🌧️"], 67:["Freezing rain","🌧️"],
+    71:["Light snow","🌨️"], 73:["Snow","🌨️"], 75:["Heavy snow","🌨️"], 77:["Snow","🌨️"],
+    80:["Light showers","🌦️"], 81:["Showers","🌦️"], 82:["Heavy showers","🌦️"],
+    85:["Snow showers","🌨️"], 86:["Snow showers","🌨️"],
+    95:["Thunderstorm","⛈️"], 96:["Thunderstorm, hail","⛈️"], 99:["Thunderstorm, hail","⛈️"]
+  };
+  return m[code] || ["Conditions unavailable","🌡️"];
+}
+const fmtClock = iso => iso ? new Date(iso).toLocaleTimeString([], {hour: "numeric", minute: "2-digit"}).replace(/\s?[AP]M/i, m => m.trim().toLowerCase()) : "";
+async function loadWeather(){
+  const el = document.getElementById("wxBody");
+  try {
+    const d = await (await fetch(WX_URL)).json();
+    const c = d.current, daily = d.daily;
+    const [cond, icon] = wxInfo(c.weather_code, c.is_day === 1);
+    const dirs = ["N","NE","E","SE","S","SW","W","NW"];
+    const windDir = dirs[Math.round((c.wind_direction_10m || 0) / 45) % 8];
+    const fc = daily.time.map((dateStr, i) => {
+      const [fCond, fIcon] = wxInfo(daily.weather_code[i], true);
+      const day = i === 0 ? "Today" : new Date(dateStr + "T12:00:00").toLocaleDateString([], {weekday:"short"});
+      const p = daily.precipitation_probability_max[i];
+      return `<div class="wx-day"><div class="d">${day}</div><div class="i" title="${fCond}">${fIcon}</div>`
+        + `<div class="t">${Math.round(daily.temperature_2m_max[i])}° <span class="lo">${Math.round(daily.temperature_2m_min[i])}°</span></div>`
+        + `<div class="p">${p == null ? "" : "💧" + p + "%"}</div></div>`;
+    }).join("");
+    el.innerHTML = `<div class="wx-layout">
+      <div><div class="wx-loc">Cherry Hill, NJ · 08003</div>
+      <div class="wx-now"><div class="wx-icon">${icon}</div>
+        <div><div class="wx-temp">${Math.round(c.temperature_2m)}°F</div><div class="wx-cond">${cond}</div></div>
+      </div></div>
+      <div class="wx-stats">
+        <div class="wx-stat"><div class="k">Feels like</div><div class="v">${Math.round(c.apparent_temperature)}°F</div></div>
+        <div class="wx-stat"><div class="k">Humidity</div><div class="v">${c.relative_humidity_2m}%</div></div>
+        <div class="wx-stat"><div class="k">Wind</div><div class="v">${Math.round(c.wind_speed_10m)} mph ${windDir}</div></div>
+        <div class="wx-stat"><div class="k">High today</div><div class="v">${Math.round(daily.temperature_2m_max[0])}°</div></div>
+        <div class="wx-stat"><div class="k">Sunrise</div><div class="v">${fmtClock(daily.sunrise[0])}</div></div>
+        <div class="wx-stat"><div class="k">Sunset</div><div class="v">${fmtClock(daily.sunset[0])}</div></div>
+      </div>
+      <div class="wx-fc">${fc}</div></div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="wx-loc">Cherry Hill, NJ · 08003</div><div class="wx-cond">Weather is unavailable right now.</div>`;
+  }
+}
+loadWeather();
+setInterval(loadWeather, 600000);
+</script>
+</body>
+</html>
