@@ -1,4 +1,4 @@
-// ScherThing bake: render the personal content (reminders + calendars) to HTML
+// Family Board bake: render the personal content (reminders + calendars) to HTML
 // and inject it into index.html between the CONTENT markers (plaintext — Matt
 // confirmed the public-dashboard choice on Nov 8, 2026; encryption removed).
 // Raw data exports live ONLY under private/ and are never pushed.
@@ -102,7 +102,7 @@ if (!calHTML) calHTML = `<div class="empty">Nothing on the family calendars in t
 
 /* ---------- assemble payload ---------- */
 const payloadHTML =
-  `<div class="snap-note">Snapshot as of ${etDayLabel(bakedAt)} · ${etTime(bakedAt)} ET · Re-baked daily — weather above is live.</div>`
+  `<div class="snap-note">Snapshot as of ${etDayLabel(bakedAt)} · ${etTime(bakedAt)} ET · Re-baked daily + hourly — weather above is live.</div>`
   + `<section class="sec sec-today"><h2>Due today <span class="n">· ${dueToday.length}</span></h2>`
   + (dueToday.length ? dueToday.map(r => itemHTML(r, { withNotes: false })).join("") : `<div class="empty">Nothing due today. 🎉</div>`)
   + `</section>`
