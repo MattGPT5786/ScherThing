@@ -19,9 +19,6 @@
   .brand-sub{font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
   .top-right{margin-left:auto;display:flex;align-items:center;gap:14px;text-align:right}
   .date{font-size:13px;font-weight:600}
-  #lockBtn{display:none;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:9px;
-    padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer}
-  #lockBtn:hover{border-color:var(--blue)}
   main{max-width:1240px;margin:0 auto;padding:16px 20px 8px}
   footer{max-width:1240px;margin:0 auto;padding:0 20px 26px;color:var(--faint);font-size:12px}
   /* ---------- weather band (public, live) ---------- */
@@ -44,20 +41,6 @@
   .wx-day .t{font-size:12px;font-weight:700}
   .wx-day .t .lo{color:var(--faint);font-weight:500}
   .wx-day .p{font-size:10px;color:var(--blue)}
-  /* ---------- lock card ---------- */
-  .lock-card{max-width:440px;margin:6vh auto 0;background:linear-gradient(180deg,var(--panel2),var(--panel));
-    border:1px solid var(--line);border-radius:16px;padding:28px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.45)}
-  .lock-emoji{font-size:38px}
-  .lock-card h1{font-size:19px;margin:10px 0 6px}
-  .lock-card p{color:var(--muted);font-size:13.5px;line-height:1.55;margin:0 0 16px}
-  .lock-row{display:flex;gap:8px}
-  .lock-row input{flex:1;background:#0d1322;border:1px solid var(--line);border-radius:10px;color:var(--text);
-    padding:11px 13px;font-size:15px;min-width:0}
-  .lock-row input:focus{outline:none;border-color:var(--blue)}
-  .lock-row button{background:linear-gradient(135deg,#7cc0ff,#2f7fe0);color:#06121f;border:none;border-radius:10px;
-    padding:11px 18px;font-size:14px;font-weight:800;cursor:pointer}
-  .lock-err{color:var(--red);font-size:13px;min-height:18px;margin-top:10px}
-  .lock-fine{color:var(--faint);font-size:11.5px;margin-top:12px;line-height:1.5}
   /* ---------- payload (decrypted content) ---------- */
   .snap-note{color:var(--faint);font-size:12px}
   .sec{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line-soft);
@@ -116,7 +99,6 @@
     </div>
     <div class="top-right">
       <div class="date" id="today"></div>
-      <button id="lockBtn" type="button">🔒 Lock</button>
     </div>
   </div>
 </header>
@@ -126,59 +108,17 @@
     <div id="wxBody"><div class="wx-loc">Cherry Hill, NJ · 08003</div><div class="wx-cond">Loading weather…</div></div>
   </section>
 
-  <div class="lock-card" id="lockCard">
-    <div class="lock-emoji">🔒</div>
-    <h1>The family list is encrypted</h1>
-    <p>Otto's care routine, the household list, and the family calendars live here — scrambled with AES-256 encryption. Enter the family passphrase to unlock them in this browser.</p>
-    <form class="lock-row" id="unlockForm">
-      <input type="password" id="pw" placeholder="Passphrase" autocomplete="current-password" aria-label="Passphrase">
-      <button type="submit" id="unlockBtn">Unlock</button>
-    </form>
-    <div class="lock-err" id="lockErr"></div>
-    <div class="lock-fine">The key is derived from your passphrase in your browser (PBKDF2, 600,000 rounds) — never stored, never sent anywhere. Nothing readable exists in this page's source.</div>
+  <div id="personalRoot">
+<!--CONTENT_START-->
+<div class="snap-note">Snapshot as of Sun, Nov 8 · 12:29pm ET · Re-baked daily — weather above is live.</div><section class="sec sec-today"><h2>Due today <span class="n">· 4</span></h2><div class="item"><div class="item-top"><span class="item-title">Otto: cyclosporine AM (1 capsule)</span><span class="flag">⚑ HIGH</span><span class="chip sched">Daily</span><span class="chip today">Today · 8:00am</span></div></div><div class="item"><div class="item-top"><span class="item-title">Proviable</span><span class="chip sched">Daily</span><span class="chip today">Today · 5:00pm</span></div></div><div class="item"><div class="item-top"><span class="item-title">Otto: Bath + ear flush with Triz Ultra cleaner</span><span class="chip sched">Thu</span><span class="chip today">Today · 6:00pm</span></div></div><div class="item"><div class="item-top"><span class="item-title">Otto: cyclosporine PM (1 capsule)</span><span class="flag">⚑ HIGH</span><span class="chip sched">Daily</span><span class="chip today">Today · 8:00pm</span></div></div></section><section class="sec sec-otto"><h2>🐾 Otto's care <span class="n">· 9 routines</span></h2><div class="item"><div class="item-top"><span class="item-title">Otto: TrizChlor 4 HC spray (every other day)</span><span class="chip sched">Every other day</span><span class="chip">Sat, Nov 7 · 7:00pm</span></div><div class="item-notes">Every other day for 1 week, then twice weekly until recheck. Air dry, no licking 15 min. Not near eyes or ears.</div></div><div class="item"><div class="item-top"><span class="item-title">Otto: cyclosporine AM (1 capsule)</span><span class="flag">⚑ HIGH</span><span class="chip sched">Daily</span><span class="chip today">Today · 8:00am</span></div><div class="item-notes">50mg modified cyclosporine, 1 capsule every 12 hrs. Give 1 hr before food or 2 hrs after. Store capsules in freezer. If vomiting/diarrhea/lethargy/no appetite: stop meds and call ADC 609-629-3241.</div></div><div class="item"><div class="item-top"><span class="item-title">Proviable</span><span class="chip sched">Daily</span><span class="chip today">Today · 5:00pm</span></div></div><div class="item"><div class="item-top"><span class="item-title">Otto: Bath + ear flush with Triz Ultra cleaner</span><span class="chip sched">Thu</span><span class="chip today">Today · 6:00pm</span></div><div class="item-notes">Once weekly. Fill canal until overflowing, massage base of ear 20-30 sec, let him shake, wipe excess. No Q-tips. Wait 30 min before drops. Switch to Malaket Plus when the bottle is empty.</div></div><div class="item"><div class="item-top"><span class="item-title">Otto: cyclosporine PM (1 capsule)</span><span class="flag">⚑ HIGH</span><span class="chip sched">Daily</span><span class="chip today">Today · 8:00pm</span></div><div class="item-notes">50mg modified cyclosporine, 1 capsule every 12 hrs. Give 1 hr before food or 2 hrs after. Store in freezer. If vomiting/diarrhea/lethargy/no appetite: stop meds and call ADC 609-629-3241.</div></div><div class="item"><div class="item-top"><span class="item-title">Otto: AtopiVet pipettes (2, shoulder blades and along back)</span><span class="chip sched">Tue</span><span class="chip">Tue, Nov 10 · 2:00pm</span></div><div class="item-notes">Once weekly. No licking or chewing for 30 min after. No bathing 2 days before or after. Skip this date if it was already applied at the clinic and shift the day.</div></div><div class="item"><div class="item-top"><span class="item-title">Otto: mometasone ear drops (6-8 drops, BOTH ears)</span><span class="chip sched">Tue &amp; Fri</span><span class="chip">Tue, Nov 10 · 8:00pm</span></div><div class="item-notes">Twice weekly until told otherwise. Use syringe (remove dropper top). If cleaned the ears the same day, wait 30 min after cleaning.</div></div><div class="item"><div class="item-top"><span class="item-title">Otto: TrizChlor 4 HC spray (twice weekly)</span><span class="chip sched">Tue &amp; Fri</span><span class="chip">Fri, Nov 13 · 5:00pm</span></div><div class="item-notes">Twice weekly until recheck. Air dry, no licking 15 min. Not near eyes or ears.</div></div><div class="item"><div class="item-top"><span class="item-title">Heartgard &amp; Nexgard</span><span class="chip sched">Monthly</span><span class="chip">Thu, Nov 26 · 1:00pm</span></div></div></section><section class="sec sec-house"><h2>🏠 Household <span class="n">· 5</span></h2><div class="item"><div class="item-top"><span class="item-title">Check easyplant water</span><span class="chip sched">Monthly</span><span class="chip">Wed, Nov 11 · 11:00am</span></div></div><div class="item"><div class="item-top"><span class="item-title">Close outside vents &amp; bring in cushions</span><span class="chip sched">Yearly</span><span class="chip">Mon, Nov 30 · 12:00pm</span></div></div><div class="item"><div class="item-top"><span class="item-title">Clean Nespresso</span><span class="chip sched">Every 6 months</span><span class="chip">Sun, Mar 7 · 12:00am</span></div></div><div class="item"><div class="item-top"><span class="item-title">Change Smoke Alarm Batteries</span><span class="chip sched">Yearly</span><span class="chip">Mon, Mar 15 · 12:00am</span></div></div><div class="item"><div class="item-top"><span class="item-title">Open outside vents &amp; bring out cushions</span><span class="chip sched">Yearly</span><span class="chip">Sun, May 16 · 12:00am</span></div></div></section><section class="sec sec-cal"><h2>📅 Next two weeks <span class="n">· Matt · Sam · ScherThing</span></h2><div class="day-group"><div class="day-label">Tue, Nov 10</div><div class="ev"><span class="time">All day</span><span class="ttl">Office </span><span class="chip cal-matt">Matt</span></div><div class="ev"><span class="time">4:00pm</span><span class="ttl">IBX Happy Hour</span><span class="chip cal-matt">Matt</span></div></div><div class="day-group"><div class="day-label">Wed, Nov 11</div><div class="ev"><span class="time">All day</span><span class="ttl">Office?</span><span class="chip cal-matt">Matt</span></div><div class="ev"><span class="time">5:30pm</span><span class="ttl">Haircut</span><span class="chip cal-matt">Matt</span></div><div class="ev"><span class="time">7:00pm</span><span class="ttl">Pickleball</span><span class="chip cal-matt">Matt</span></div></div><div class="day-group"><div class="day-label">Thu, Nov 12</div><div class="ev"><span class="time">All day</span><span class="ttl">Office</span><span class="chip cal-matt">Matt</span></div></div><div class="day-group"><div class="day-label">Fri, Nov 13</div><div class="ev"><span class="time">5:00pm</span><span class="ttl">Turkey pick up</span><span class="chip cal-scher">ScherThing</span></div></div><div class="day-group"><div class="day-label">Sat, Nov 14</div><div class="ev"><span class="time">6:00pm</span><span class="ttl">Friendsgiving</span><span class="chip cal-scher">ScherThing</span></div></div><div class="day-group"><div class="day-label">Mon, Nov 16</div><div class="ev"><span class="time">8:45am</span><span class="ttl">Vet Follow Up</span><span class="chip cal-scher">ScherThing</span></div></div><div class="day-group"><div class="day-label">Wed, Nov 18</div><div class="ev"><span class="time">7:00pm</span><span class="ttl">Pickleball</span><span class="chip cal-matt">Matt</span></div></div></section>
+<!--CONTENT_END-->
   </div>
-
-  <div id="personalRoot" hidden></div>
 </main>
 
-<footer>ScherThing · Weather is live · Family content is an encrypted snapshot, re-baked daily.</footer>
+<footer>ScherThing · Weather is live · Family content is a snapshot, re-baked daily.</footer>
 
 <script>
-/*PAYLOAD_START*/
-const ENCRYPTED_PAYLOAD = {"v":1,"iter":600000,"salt":"XfDuIj/tfwcNUh1b8mO2zQ==","iv":"ver6OkwbS9fO/bqd","data":"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"};
-/*PAYLOAD_END*/
 
-/* ---------- unlock ---------- */
-const b64ToBuf = s => Uint8Array.from(atob(s), c => c.charCodeAt(0)).buffer;
-async function tryUnlock(passphrase){
-  if (!ENCRYPTED_PAYLOAD) throw new Error("No snapshot baked yet.");
-  const enc = new TextEncoder();
-  const baseKey = await crypto.subtle.importKey("raw", enc.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
-  const key = await crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt: b64ToBuf(ENCRYPTED_PAYLOAD.salt), iterations: ENCRYPTED_PAYLOAD.iter, hash: "SHA-256" },
-    baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
-  const plain = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv: b64ToBuf(ENCRYPTED_PAYLOAD.iv) }, key, b64ToBuf(ENCRYPTED_PAYLOAD.data));
-  return new TextDecoder().decode(plain);
-}
-document.getElementById("unlockForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const btn = document.getElementById("unlockBtn");
-  const err = document.getElementById("lockErr");
-  btn.disabled = true; btn.textContent = "Unlocking…"; err.textContent = "";
-  try {
-    const html = await tryUnlock(document.getElementById("pw").value);
-    const root = document.getElementById("personalRoot");
-    root.innerHTML = html;
-    root.hidden = false;
-    document.getElementById("lockCard").hidden = true;
-    document.getElementById("lockBtn").style.display = "inline-block";
-  } catch (_) {
-    err.textContent = "That passphrase didn't work. Try again.";
-    btn.disabled = false; btn.textContent = "Unlock";
-  }
-});
-document.getElementById("lockBtn").addEventListener("click", () => location.reload());
 document.getElementById("today").textContent =
   new Date().toLocaleDateString([], { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
