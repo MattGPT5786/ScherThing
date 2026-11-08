@@ -1,6 +1,6 @@
-# Family Board
+# ScherThing — Family Dashboard
 
-A single-file family dashboard (repo: ScherThing — the page's display name is Family Board, to stay distinct from the ScherThing calendar and ScherThing reminders list). Live Cherry Hill (08003) weather on top; below it, the ScherThing reminders list (Otto's care routine + household) and the next two weeks of the Matt / Sam / ScherThing calendars — baked in as a snapshot and refreshed daily.
+A single-file family dashboard. Live Cherry Hill (08003) weather on top; below it, the ScherThing reminders list (Otto's care routine + household) and the next two weeks of the Matt / Sam / ScherThing calendars — baked in as a snapshot and refreshed daily.
 
 ## How it works
 - **Weather (live):** Open-Meteo, keyless + CORS-open, fetched in the browser every 10 minutes.

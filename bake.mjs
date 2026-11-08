@@ -1,4 +1,4 @@
-// Family Board bake: render the personal content (reminders + calendars) to HTML
+// ScherThing bake: render the personal content (reminders + calendars) to HTML
 // and inject it into index.html between the CONTENT markers (plaintext — Matt
 // confirmed the public-dashboard choice on Nov 8, 2026; encryption removed).
 // Raw data exports live ONLY under private/ and are never pushed.
